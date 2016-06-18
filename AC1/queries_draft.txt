@@ -1,0 +1,10 @@
+create view viajestotales as select c.comuna, count(*) as cantidad from comuna as c, viajes as v, modo as m where v.comunaorigen=c.id and m.id = v.modoagregado group by c.comuna;
+
+
+create view viajestotales as select c.comuna, count(*) as cantidad from comuna as c, viajes as v, modo as m where v.comunaorigen=c.id and m.id = v.modoagregado group by c.comuna;
+
+create view viajesmodo as select c.comuna, m.modo, count(*) as cantidad from comuna as c, viajes as v, modo as m where v.comunaorigen=c.id and m.id = v.modoagregado group by c.comuna, m.modo;
+
+select vt.comuna, vm.modo, vt.cantidad, vm.cantidad, cast(vm.cantidad as float)/cast(vt.cantidad as float) as p from viajestotales as vt, viajesmodo as vm where vt.comuna=vm.comuna and vm.modo=order by vm.modo, p desc;
+
+select vt.comuna, vt.cantidad, vm.cantidad, cast(vm.cantidad as float)/cast(vt.cantidad as float) as p from viajestotales as vt, viajesmodo as vm where vt.comuna=vm.comuna and vm.modo="Caminata" order by p desc;

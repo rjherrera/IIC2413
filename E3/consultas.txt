@@ -1,0 +1,111 @@
+
+# Dado un usuario, muestre el plan asociado y cuantas peliculas o series le quedan por ver este mes
+SELECT u.username, p.nombre, u.restantes_mes, p.cantidad
+FROM Usuarios AS u, Planes AS p, Contrata AS c
+WHERE u.username = c.username AND c.id_plan = p.id AND u.username = 'usuariodado'
+
+# Dado un usuario,muestre todas las peliculas que ha visto este año
+SELECT e.nombre, v.fecha
+FROM usuarios AS u, vistos AS v, entretenimientos AS e, peliclas as p
+WHERE u.username = v.username
+    AND v.id_entretenimiento = e.id
+    AND e.id = p.id_entretenimiento
+    AND v.fecha >= '2016-01-01'
+    AND v.fecha < '2017-01-01'
+    AND u.username = 'usuariodado' ## en vez de esta linea tambien se podria hacer que
+                                   ## todo lo anterior sea una subconsulta de una consulta mayor en la que seleccionamos el usuario
+
+# Muestre todas las peliculas para un determinado genero o fecha
+
+# 1. genero
+SELECT e.nombre, g.nombre, p.oscares #oscares es opcional
+FROM entretenimientos AS e, esde, generos AS g, peliculas AS p
+WHERE e.id = esde.id_entretenimiento
+    AND esde.id_genero = g.id
+    AND e.id = p.id_entretenimiento
+    AND g.nombre = 'generodado'
+
+# 2. fecha
+
+SELECT e.nombre, e.fecha
+FROM entretenimientos AS e, peliculas AS p
+WHERE e.id = p.id_entretenimiento
+AND e.fecha = 'fechadada'  # <- fechadada
+
+# 3. juntas
+SELECT e.nombre, g.nombre, e.fecha
+FROM entretenimientos AS e, esde, generos AS g, peliculas AS p
+WHERE e.id = esde.id_entretenimiento
+  AND esde.id_genero = g.id
+  AND e.id = p.id_entretenimiento
+  AND g.id = 'generodado'
+  AND e.fecha = 'fechadada'
+
+
+# Dado un actor o actriz, muestre todas las peliculas donde actua ese actor
+
+# 1. Opcion like (más adecuada para búsqueda no dropdown)
+SELECT e.nombre, e.fecha
+FROM actores AS a, actuan, entretenimientos AS e, peliculas AS p
+WHERE a.id = actuan.id_actor
+    AND actuan.id_entretenimiento = e.id
+    AND e.id = p.id_entretenimiento
+    AND a.nombre LIKE '%actordado%'
+
+# 2. Opcion ID (mejor para dropdown)
+SELECT e.nombre, e.fecha
+FROM actores AS a, actuan, entretenimientos AS e, peliculas AS p
+WHERE a.id = actuan.id_actor
+    AND actuan.id_entretenimiento = e.id
+    AND e.id = p.id_entretenimiento
+    AND a.id = 'actordado'
+
+# Dada una serie, muestre todas las temporadas y capitulos de la serie
+
+SELECT e.nombre, c.temporada
+FROM series AS s, pertenece, capitulos AS c, entretenimientos AS e
+WHERE s.id = pertenece.id_serie
+    AND pertenece.id_capitulo = c.id_entretenimiento
+    AND c.id_entretenimiento = e.id
+    AND s.nombre LIKE 'seriedada'
+
+# Muestre el director  con mas peliculas y/o capitulos de serie (no depurado)
+
+SELECT nueva.nombre, nueva.count
+FROM (  SELECT d.nombre, count(*)
+        FROM directores AS d, dirige, entretenimientos AS e
+        WHERE d.id = dirige.id_director
+            AND dirige.id_entretenimiento = e.id
+        GROUP BY d.nombre ) AS nueva
+WHERE nueva.count >= ALL (  SELECT count(*)
+                            FROM directores AS d, dirige, entretenimientos AS e
+                            WHERE d.id = dirige.id_director
+                                AND dirige.id_entretenimiento = e.id
+                            GROUP BY d.nombre )
+
+# Análogamente y más simplificado, y la que está puesta en la página:
+SELECT
+    nombre, c
+FROM
+    Directores AS d,
+    (SELECT id_director, COUNT(*) as c
+    FROM dirige
+    GROUP BY id_director
+    HAVING COUNT(*) >= ALL (SELECT COUNT(*)
+                            FROM dirige
+                            GROUP BY id_director)) AS dc
+WHERE d.id = dc.id_director;
+
+# Muestre la película más vista
+
+CREATE VIEW VistosPeliculas AS
+    SELECT v.id_entretenimiento, COUNT(*) as cant
+    FROM Vistos as v, Peliculas as p
+    WHERE v.id_entretenimiento = p.id_entretenimiento AND
+        fecha >= '2016-01-01' AND fecha < '2017-01-01'
+    GROUP BY v.id_entretenimiento;
+
+SELECT nombre, cant
+FROM VistosPeliculas, Entretenimientos
+WHERE cant = (SELECT MAX(cant) FROM VistosPeliculas) AND
+    id_entretenimiento = id;

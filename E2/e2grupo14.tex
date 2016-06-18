@@ -1,0 +1,126 @@
+\documentclass[letter]{article}
+
+\usepackage{uc}
+\usepackage{enumerate}
+\usepackage{listings}
+\lstset{
+basicstyle=\small\ttfamily,
+columns=flexible,
+breaklines=true
+}
+
+\nombre{Raimundo Perez y Raimundo Herrera} % Aqui va el nombre del alumno
+\numtarea{2} % Aqui va el número de la entrega
+
+
+\begin{document}
+
+	\begin{pregunta}{1} % Aqui se coloca el número de la pregunta
+		Se escogió la opción \textbf{2} para el desarrollo de esta entrega.\\ \\
+		El diagrama entidad-relación es el siguiente:\\ \\
+		\includegraphics[width=17cm]{er.png}\\ \\
+		En el diagrama, manteniendo similitud con la notación vista en clases, se presentan de color azul las entidades, los atributos de amarillo y las relaciones en rojo. Las flechas indican la cardinalidad de las relaciones, por lo que una flecha apuntando a una entidad, implica que la entidad apuntada es de cardinalidad $1$ y la que apunta $N$. Por otro lado aquellas uniones o conexiones sin flecha indican relaciones $N$ a $N$. No hay en este caso relaciones $1$ a $1$.\\
+
+		Las relaciones presentadas en la mayoría de los casos no llevan señalados sus atributos. Más adelante se constata que sí tienen atributos, pero estos corresponden a las llaves de las entidades que relacionan. En los casos que la relación agrega información, como es el caso de la entidad $Comentan$ con el atributo $Fecha$, se señala en el diagrama.\\
+
+		La estrategia general usada para fabricar el diagrama fue pensando en eliminar redundancias y generar a futuro tablas que no tengan más información de la necesaria, de cierto modo, ceñirse a su nombre, es decir, si una tabla es de $Usuarios$, que no tenga atributos propios de otras entidades, tal como el $precio$ que paga por el $Plan$ contratado.\\
+
+		A continuación se presenta una tabla con la descripción de las tablas incluidas en el diagrama:\\
+
+		\begin{tabular}{ c|p{12cm} }
+			Tabla & Descripción\\
+			\hline
+			Usuarios & La tabla contendrá a todos los registrados en la página, con los datos para acceder, información general y un atributo de $restantes\_mes$, correspondiente a la cantidad de $capitulos$ y/o $series$ que puede ver aún, considerando la regla de 1:4 ($Pelicula:Capitulo$)\\
+			\hline
+			Planes & Esta tabla presenta la información de los planes de $MaquiView$, donde el atributo cantidad representa el número de $capitulos$ y/o $series$ con los que cuenta un usuario al contratar un plan\\
+			\hline
+			Entretenimiento & Muestra la información genérica a un capítulo o a una película, información referida al contenido audiovisual, duración, fecha, nombre, etc. \\
+			\hline
+			Capitulos & Contiene, además de los atributos comunes a cualquier contenido audiovisual (entretenimiento), el número de la temporada a la que pertenece.\\
+			\hline
+			Series & La tabla presenta el nombre de la serie, junto con la cantidad de capitulos por temporada.\\
+			\hline
+			Peliculas & Presenta la información básica de contenido multimedia, pues hereda de entretenimiento y además un atributo oscares para saber la cantidad de premios con que cuenta.\\
+			\hline
+			Actores & Muestra el nombre de los actores y su sexo, para así poder generar consultas relacionadas con el género de los actores/actrices.\\
+			\hline
+			Directores & Nuevamente, el nombre de los directores, junto con su sexo, por la misma razón.\\
+			\hline
+			Generos & Se incluye como tabla, ya que en el enunciado se señalaba la posibilidad de pertenecer a varios géneros.\\
+		\end{tabular}\\ \\
+
+		Todas las tablas anteriores cuentan con un identificador ($id$) que es la llave de ellas, excepto la tabla $Usuarios$, cuya llave es el $username$.\\ \\
+		Adicionalmente las tablas generadas por las relaciones son: \\
+
+		\begin{tabular}{ c|p{12cm} }
+			Tabla & Descripción\\
+			\hline
+			Comenta & Usuario comenta entretenimiento, tiene el $username$ del usuario, $id$ del entretenimiento, $id$ del comentario, comentario en sí, y rating, más un atributo adicional de la fecha en que se realizó.\\
+			\hline
+			Contrata & Usuario contrata un plan, tiene el $id$ del plan y $username$ del usuario, con fecha, no pensando en fechas de expiración ya que los planes terminan por un tema de cantidad de consumo, sino que pensando en las estadísticas (usuarios suscritos a alguna fecha por ejemplo).\\
+			\hline
+			Vistos & Usuario ve entretenimiento (capítulo/película), tiene el $id$ de ambos.\\
+			\hline
+			Dirige & Actor dirige entretenimiento, con el $id$ de ambos.\\
+			\hline
+			Es de & Entretenimiento es de un género, tiene $id$ de ambos.\\
+			\hline
+			Actuan & Actor actúa en entretenimiento, con el $id$ de ambos.\\
+			\hline
+			Pertenece & Capítulo pertenece a serie, nuevamente, tiene el $id$ de ambos.\\
+		\end{tabular}\\ \\
+
+		En las tablas correspondientes a relaciones se trabaja con llaves foráneas cuando se menciona "el $id$ de ambos" o similar. \\
+
+		Las dependencias funcionales son las siguientes, se presentan algunas, ya que las demás son análogas, la intención es mostrar que las llaves determinan los otros atributos: \\
+
+		\begin{tabular}{ c|p{12cm} }
+			Tabla & Dependencia\\
+			\hline
+			Usuario & username $\rightarrow$ nombre, sexo, correo, password, edad, email\\
+			\hline
+			Planes & id $\rightarrow$ nombre, precio, cantidad\\
+			\hline
+			Entretenimientos & id $\rightarrow$ nombre, duración, fecha\\
+			\hline
+			...\\
+		\end{tabular}\\ \\
+
+		Y el modelo se encuentra en BCNF porque, las dependencias funcionales presentan llaves a la izquierda de la relación, y la forma en la que se armaron las tablas fue generando tablas para las relaciones, lo que nos asegura no agregar redundancia ni dependencias que violen BCNF.\\
+
+		Los comandos utilizados fueron en general muy similares entre grupos, se incluyen separados por grupos de características similares:\\
+		\begin{enumerate}
+			\item Tablas con primary keys
+				\begin{lstlisting}
+CREATE TABLE Usuarios(username varchar(15) PRIMARY KEY, password varchar(15), nombre varchar(40), sexo char(1), edad int, email varchar(50), restantes_mes float);
+CREATE TABLE Planes(id int PRIMARY KEY, nombre varchar(40), precio float, cantidad int);
+CREATE TABLE Entretenimientos(id int PRIMARY KEY, nombre varchar(40), duracion int, fecha date);
+CREATE TABLE Generos(id int PRIMARY KEY, nombre varchar(40));
+CREATE TABLE Actores(id int PRIMARY KEY, nombre varchar(40), sexo char(1));
+CREATE TABLE Directores(id int PRIMARY KEY, nombre varchar(40), sexo char(1));
+CREATE TABLE Series(id int PRIMARY KEY, nombre varchar(40), caps_por_temp int);
+				\end{lstlisting}
+			\item Tablas con herencia (modelada como una FOREIGN KEY)
+				\begin{lstlisting}
+CREATE TABLE Capitulos(id_entretenimiento int PRIMARY KEY REFERENCES Entretenimientos(id), temporada int);
+CREATE TABLE Peliculas(id_entretenimiento int PRIMARY KEY REFERENCES Entretenimientos(id), oscares int);
+				\end{lstlisting}
+			\item Tablas con llaves foráneas
+				\begin{lstlisting}
+CREATE TABLE Contrata(id_plan int REFERENCES Planes(id), username varchar(15) REFERENCES Usuarios(username), fecha date);
+CREATE TABLE Comenta(id int PRIMARY KEY, username varchar(15) REFERENCES Usuarios(username), id_entretenimiento int REFERENCES Entretenimientos(id), comentario text, rating float, fecha date);
+CREATE TABLE Vistos(id_entretenimiento int REFERENCES Entretenimientos(id), username varchar(15) REFERENCES Usuarios(username), fecha date);
+CREATE TABLE Dirige(id_entretenimiento int REFERENCES Entretenimientos(id), id_director int REFERENCES Directores(id));
+CREATE TABLE EsDe(id_entretenimiento int REFERENCES Entretenimientos(id), id_genero int REFERENCES Generos(id));
+CREATE TABLE Actuan(id_entretenimiento int REFERENCES Entretenimientos(id), id_actor int REFERENCES Actores(id));
+CREATE TABLE Pertenece(id_capitulo int REFERENCES Capitulo(id), id_serie int REFERENCES Series(id));
+				\end{lstlisting}
+		\end{enumerate}
+
+		En cuanto a algúna consulta de las iniciales correspondiente a lo definido para la entrega 1, tenemos que, por ejemplo, la consulta referida a, dado un usuario obtener su plan y sus restantes sería:
+		\begin{lstlisting}
+SELECT planes.nombre, usuarios.restantes_mes FROM usuarios, contrata, planes WHERE contrata.username='pepe' and contrata.username = usuarios.username and planes.id = contrata.id_plan;
+		\end{lstlisting}
+	\end{pregunta}
+
+\end{document}

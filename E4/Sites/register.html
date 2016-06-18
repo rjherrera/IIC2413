@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <!-- FIRST INCLUDES -->
+    <link href="static/main.css" type="text/css" rel="stylesheet"/>
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <!-- Semantic UI -->
+    <link rel="stylesheet" type="text/css" href="static/semantic/semantic.min.css">
+    <script src="static/semantic/semantic.min.js"></script>
+    <!-- Prism -->
+    <script src="static/prism.js"></script>
+    <link href="static/prism.css" rel="stylesheet"/>
+    <!-- END FIRST INCLUDES -->
+    <title>MaquiView | Grupo 14</title>
+  </head>
+  <body style="background: url('https://static.pexels.com/photos/1828/city-cars-road-traffic-large.jpg') no-repeat center center fixed;background-size: cover;">
+    <div class="ui fluid fixed inverted one item main menu">
+      <div class="borderless item" style="font:Verdana;font-weight: lighter;">
+        <i><b>MAQUI</b></i><img class="logo" src="static/img/logo.png" style="margin-left: 3px;margin-right:3px;"></i><i><b>PASA</b></i>
+      </div>
+    </div>
+
+<?php
+session_start();
+
+if(isset($_SESSION['username'])){
+  // Si la variable de sesión existe, redirigir a home.php (pagina del usuario)
+    header("location:home.php");
+}
+?>
+
+    <div class="main-content">
+      <div class="ui stackable three column grid">
+        <div class="four wide column"></div>
+        <div class="eight wide column">
+          <div class="ui segment">
+            <form class="ui form" id="form_register" onsubmit="return false;">
+              <h2 class="ui dividing header">
+                <div class="content">
+                  Registrarse en MaquiView
+                </div>
+              </h2>
+              <div class="ui error message" style="display:none;" id="error_register">
+                <ul class="list">
+                  <li></li>
+                </ul>
+              </div>
+              <div class="field">
+                <input type="hidden" name="consulta" value="registrar">
+              </div>
+              <div class="field">
+                <label>Usuario</label>
+                <input type="text" name="username">
+              </div>
+              <div class="field">
+                <label>Password</label>
+                <input type="password" name="password">
+              </div>
+              <div class="field">
+                <label>Nombre Completo</label>
+                <input type="text" name="nombre">
+              </div>
+              <div class="field">
+                <label>Sexo</label>
+                <input type="text" name="sexo">
+              </div>
+              <div class="field">
+                <label>Edad</label>
+                <input type="number" name="edad">
+              </div>
+              <div class="field">
+                <label>E-Mail</label>
+                <input type="email" name="email">
+              </div>
+              <div class="field">
+                <div class="ui toggle checkbox">
+                  <input type="checkbox" name="quipasa">
+                  <label>Registrar también en QuiPasa</label>
+                </div>
+              </div>
+              <div class="ui blue submit button" type="button" id="button_register">Registrarse</div>
+            </form>
+          </div>
+        </div>
+        <div class="four wide column"></div>
+      </div>
+
+
+      <div class="ui horizontal divider"></div>
+      <div class="ui horizontal divider"></div>
+      <div class="ui basic center aligned segment">
+        <p>Grupo 14/27 - Raimundo Pérez | Raimundo Herrera |/| Andrés Espinosa | Cristóbal Abarca - © 2016</p>
+      </div>
+    </div>
+  </body>
+  <!-- LAST INCLUDES-->
+  <script src="static/main.js" type="text/javascript"></script>
+  <!-- END LAST INCLUDES -->
+</html>

@@ -1,0 +1,46 @@
+\documentclass[letter]{article}
+
+\usepackage{uc}
+\usepackage{enumerate}
+
+\nombre{Raimundo Perez y Raimundo Herrera} % Aqui va el nombre del alumno
+\numtarea{1} % Aqui va el número de la tarea
+
+
+\begin{document}
+
+	\begin{pregunta}{1} % Aqui se coloca el número de la pregunta
+		\begin{enumerate}
+		\item El esquema es el siguiente:
+			\begin{center}
+				\textbf{Usuarios}(\underline{username:string}, password:string, nombre:string, sexo:string, edad:integer, correo:string, restantes\_mes:float, id\_plan:integer)\\
+
+				\textbf{Planes}(\underline{id:integer}, nombre:string, precio:integer, cantidad:float)\\
+
+				\textbf{Peliculas}(\underline{id:integer}, nombre:string, generos:string, directores:string, actores:string, fecha:date, duracion:integer) \\
+
+				\textbf{Series}(\underline{id integer}, nombre string, generos string, duracion integer, temporadas integer, c\_por\_temp integer) \\
+
+				\textbf{Capitulos}(\underline{id integer}, id\_serie integer, directores string, actores string, fecha date, temporada integer, nombre string) \\
+
+				\textbf{Vistos\_peliculas}(\underline{id integer}, username string, id\_pelicula integer, fecha date) \\
+
+				\textbf{Vistos\_series}(\underline{id integer}, username string, id\_serie integer, fecha date) \\
+
+				\textbf{Social}(\underline{username string, id integer, comentario string, rating float}) \\
+			\end{center}
+		\item Las consultas son las siguientes:
+			\begin{enumerate}[(1)]
+				\item \addtocounter{enumii}{1}
+					Se asume en un principio, que para este esquema, cada vez que se agrega una entrada o tupla a la tabla $vistos\_peliculas$ o $vistos\_series$, se resta del atributo $restantes\_mes$ perteneciente al usuario, la cantidad respectiva. También se actualiza esa cantidad mensualmente y al cambiar de plan. La consulta, entonces, queda así para un usuario cualquiera $usuario_0$:\\ \\
+					$\rho(Aux, \pi_{plan, restantes\_mes}(\sigma_{username=usuario_0}(Usuarios))) \\
+					\rho(Final, Aux \bowtie_{Aux.id\_plan=Planes.id} Planes) \\
+					\pi_{plan, restantes\_mes}(FINAL)$\\
+    				\item
+    					Para un género cualquiera $genero_0$ y para una fecha cualquiera $fecha_0$ la consulta es:\\ \\
+    					$\pi_{nombre}(\sigma_{generos=genero_0 \vee fecha=fecha_0}(Peliculas))  $
+			\end{enumerate}
+		\end{enumerate}
+	\end{pregunta}
+
+\end{document}
